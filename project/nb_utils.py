@@ -3,10 +3,15 @@ from ripser import ripser
 from scipy import sparse
 
 
-def gen_ar2_coeffs(oscillatory=False, random_seed=0):
+def gen_ar2_coeffs(oscillatory=False, phi1="both", random_seed=0):
     """generate coefficients for an stationary AR(2) process"""
     rng = np.random.default_rng(seed=random_seed)
-    phi1 = rng.uniform(-2, 2)
+    if phi1 == "positive":
+        phi1 = rng.uniform(0, 1.9)
+    elif phi1 == "negative":
+        phi1 = rng.uniform(-1.9, 0)
+    else:
+        phi1 = rng.uniform(-1.9, 1.9)
     if oscillatory:
         phi2 = rng.uniform(-1, -0.25 * phi1**2)
     else:
@@ -35,13 +40,11 @@ def sublevel_set_filtration(X):
     D = sparse.coo_matrix((V, (I, J)), shape=(N, N)).tocsr()
     dgm0 = ripser(D, maxdim=0, distance_matrix=True)["dgms"][0]
     dgm0 = dgm0[dgm0[:, 1] - dgm0[:, 0] > 1e-3, :]
-    allgrid = np.unique(dgm0.flatten())
-    allgrid = allgrid[allgrid < np.inf]
-    ys = np.unique(dgm0[:, 1])
-    ys = ys[ys < np.inf]
 
     # remove infinity points
+    dgm0 = np.vstack(([0, 0], dgm0))
+    dgm0 = np.hstack((dgm0, np.zeros((len(dgm0), 1))))
     where_are_inf = np.isinf(dgm0)
     dgm0 = dgm0[~where_are_inf[:, 1]]
 
-    return dgm0
+    return dgm0[None, ...]
