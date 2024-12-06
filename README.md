@@ -4,3 +4,4 @@
 [course material](https://github.com/ZhengchaoW/DSC214-SPR24)  
 [project report](./project/01-report.pdf)  
 [project slides](./project/01-slides.pdf)  
+[project presentation](https://www.youtube.com/watch?v=un4xtpPkt9A)
